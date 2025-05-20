@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solana Mint</title>
+    <title>Solana Wallet Connect Test</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -56,98 +56,6 @@
             margin-bottom: 15px;
             word-break: break-all;
         }
-        .input-box {
-            margin-bottom: 15px;
-        }
-        .input-box label {
-            display: block;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-            color: #333333;
-        }
-        .custom-select {
-            position: relative;
-            width: 100%;
-        }
-        .select-selected {
-            padding: 10px;
-            background: #ffffff;
-            border: 1px solid #cccccc;
-            border-radius: 5px;
-            color: #333333;
-            font-size: 1em;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
-        .select-selected img {
-            width: 20px;
-            height: 20px;
-            margin-right: 8px;
-        }
-        .select-items {
-            position: absolute;
-            background: #ffffff;
-            border: 1px solid #cccccc;
-            border-radius: 5px;
-            width: 100%;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 99;
-            display: none;
-        }
-        .select-items div {
-            padding: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
-        .select-items div img {
-            width: 20px;
-            height: 20px;
-            margin-right: 8px;
-        }
-        .select-items div:hover {
-            background: #f0f0f0;
-        }
-        .select-items.show {
-            display: block;
-        }
-        .action-button {
-            padding: 12px;
-            background: #00c853;
-            color: #ffffff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            transition: background 0.2s;
-            position: relative;
-        }
-        .action-button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-        }
-        .action-button:hover:not(:disabled) { background: #00b140; }
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #fff;
-            border-top: 2px solid #00c853;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-left: 5px;
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
         @media (max-width: 480px) {
             body { padding: 10px; }
             .container { padding: 15px; }
@@ -157,142 +65,41 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">Solana Mint</div>
+        <div class="header">Solana Wallet Connect Test</div>
         <div class="connect-section">
             <button id="connectWalletButton">Connect Wallet</button>
             <div id="networkStatus" class="status">Click to connect...</div>
         </div>
-        <div class="input-box">
-            <label>Select Whitelisted Token</label>
-            <div class="custom-select">
-                <div class="select-selected">
-                    <img src="" alt="" style="display: none;">
-                    Select a token
-                </div>
-                <div class="select-items">
-                    <div data-value="So11111111111111111111111111111111111111112" data-logo="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png">
-                        <img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png" alt="SOL"> SOL
-                    </div>
-                    <div data-value="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" data-logo="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png">
-                        <img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png" alt="USDC"> USDC
-                    </div>
-                    <div data-value="Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB" data-logo="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.png">
-                        <img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.png" alt="USDT"> USDT
-                    </div>
-                </div>
-            </div>
-        </div>
-        <button class="action-button" id="mintButton" disabled>Mint Token</button>
     </div>
 
-    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
-    <script src="https://unpkg.com/@solana/spl-token@latest/lib/index.iife.min.js"></script>
     <script>
-        let connection, wallet, publicKey;
-        let selectedToken = '';
-
-        function initializeCustomSelect() {
-            const select = document.querySelector('.custom-select');
-            const selected = select.querySelector('.select-selected');
-            const items = select.querySelector('.select-items');
-            const options = items.querySelectorAll('div');
-
-            selected.addEventListener('click', () => {
-                items.classList.toggle('show');
-            });
-
-            options.forEach(option => {
-                option.addEventListener('click', () => {
-                    selected.innerHTML = option.innerHTML;
-                    selectedToken = option.getAttribute('data-value');
-                    items.classList.remove('show');
-                    updateMintButton();
-                });
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!select.contains(e.target)) {
-                    items.classList.remove('show');
-                }
-            });
-        }
-
-        function updateMintButton() {
-            const mintButton = document.getElementById('mintButton');
-            mintButton.disabled = !selectedToken || !publicKey;
-        }
-
         async function connectWallet() {
             const status = document.getElementById('networkStatus');
             const connectButton = document.getElementById('connectWalletButton');
 
             if (window.solana) {
                 try {
+                    // Attempt to connect to the wallet
                     await window.solana.connect();
-                    wallet = window.solana;
-                    publicKey = wallet.publicKey.toString();
+                    const publicKey = window.solana.publicKey.toString();
+
+                    // Update UI with connected wallet address
                     connectButton.innerText = `Connected: ${publicKey.slice(0, 6)}...${publicKey.slice(-4)}`;
-                    status.innerText = 'Connected to Solana';
+                    status.innerText = `Wallet connected: ${publicKey}`;
 
-                    // Initialize Solana connection
-                    connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('mainnet-beta'), 'confirmed');
-
-                    // Verify network (optional)
-                    const version = await connection.getVersion();
-                    status.innerText = `Connected to Solana Mainnet (Version: ${version['solana-core']})`;
-
-                    updateMintButton();
                 } catch (error) {
+                    // Handle connection errors (e.g., user rejects connection)
                     status.innerText = `Failed to connect wallet: ${error.message || 'Unknown error'}`;
+                    console.error(error);
                 }
             } else {
+                // No Solana wallet detected
                 status.innerText = 'Please install a Solana wallet (e.g., Phantom)';
             }
         }
 
-        async function mintToken() {
-            const status = document.getElementById('networkStatus');
-            const mintButton = document.getElementById('mintButton');
-            const tokenAddress = selectedToken;
-
-            if (!connection || !wallet || !publicKey) {
-                status.innerText = 'Please connect wallet first.';
-                return;
-            }
-
-            if (!tokenAddress) {
-                status.innerText = 'Please select a token.';
-                return;
-            }
-
-            try {
-                mintButton.disabled = true;
-                mintButton.innerHTML = 'Minting... <span class="spinner"></span>';
-                status.innerText = `Preparing to mint with token: ${tokenAddress}`;
-
-                // Placeholder for Mint logic (since no contract is provided)
-                // In a real implementation, you would:
-                // 1. Create a transaction with the mint instruction
-                // 2. Sign and send the transaction using wallet.signTransaction
-                // 3. Wait for confirmation
-
-                // Simulate a delay for demo purposes
-                await new Promise(resolve => setTimeout(resolve, 2000));
-
-                status.innerText = 'Minting is not implemented (no contract provided).';
-            } catch (error) {
-                status.innerText = `Mint failed: ${error.message || 'Unknown error'}`;
-                console.error(error);
-            } finally {
-                mintButton.disabled = false;
-                mintButton.innerHTML = 'Mint Token';
-                updateMintButton();
-            }
-        }
-
+        // Attach event listener to connect button
         document.getElementById('connectWalletButton').addEventListener('click', connectWallet);
-        document.getElementById('mintButton').addEventListener('click', mintToken);
-        initializeCustomSelect();
     </script>
 </body>
 </html>
